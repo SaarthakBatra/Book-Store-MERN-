@@ -1,0 +1,230 @@
+1. Setup the backend using "MERN backend Setup.txt".
+
+2. Create the following folders in project location,
+    a. models -> For all the project models.
+    b. routes -> For all the routes of a specific model.
+
+3. Open models and create bookModel.js to create a model for Book Data, type 
+    a. Import mongoose for writing schema of model
+        [import mongoose from "mongoose";]
+
+    b. Create a Schema for Model (refer mongoosejs.com)
+        [const bookSchema = mongoose.Schema(
+            {
+                title: {
+                    type: String,
+                    required: true
+                },
+                author: {
+                    type: String,
+                    required: true
+                },
+                publishYear: {
+                    type: Number,
+                    required: true
+                }
+            }
+            //For saving date and time of creation and last update
+            {
+                timestamps: true
+            }
+        );]
+
+    c. Export the model to be used in index.js
+        [export const Book = mongoose.model('Book', bookSchema);]
+
+4. Open routes and create bookRoutes.js to create routes for Book Data, then
+    a. Import express
+        [import express from 'express';]
+
+    b. Import bookModel
+        [import {BOOK} from './models/bookModel.js';]
+    
+    c. Define router variable
+        [const router = express.Router();]
+
+    d. Open postman in browser and login, to test all methods.
+
+    e.Create a new Book entry in Database
+        1.[router.post('/', async (request, response) => {
+            try{
+                //Validate the input
+
+                //Define a variable for new book
+
+                //Creating a new book
+                const book = await Book.create(newBook);
+        
+                //Post success on server
+
+                //Return response
+            } 
+            catch(error) {
+                //Post error on server and return error to call function
+            }
+        });]
+
+        2.Open new request in Postman(Open new tab from top left corner), type
+            [
+                method: POST
+                url: http://localhost:5555/books
+                body: {
+                    "title": "Book Title",
+                    "author": "Book Author",
+                    "publishYear": XXXX
+                }
+            ]
+    
+
+    f.Get list of all Books in Database
+        1.[router.get('/', async (request, response) => {
+            try {
+                //Retrieving Book data from Database
+                const books = await Book.find({});
+
+                //Post success on server
+
+                //Return response
+                return response.status(XXX).json({
+                    count: books.length,
+                    data: books
+                }
+        );
+            }
+            catch(error) {
+                //Post error on server and return error to call function
+            }
+        });]
+
+        2.Open new request in Postman, type
+            [
+                method: Get
+                url: http://localhost:5555/books
+            ]
+
+    g.Get a specific Book from Database by ID
+        1.[router.get('/:id', async (request, response) => { 
+            try {
+                //Get id from request
+                const {id} = request.params;
+
+                //Find book by id
+                const book = await Book.findById(id);
+
+                //Post success on server
+                
+                //Return response
+                return response.status(203).json({
+                    message: 'Successfully retrieved book data',
+                    data: book
+                });
+            }
+            catch(error) {
+                //Post error on server and return error to call function
+            }
+        });]
+
+        2.Open new request in Postman, type
+            [
+                method: Get
+                url: http://localhost:5555/books/"book_id"
+            ]
+
+    h.Update a Book in Database by ID
+        1.router.put('/:id', async (request, response) => {
+            try{
+                //Validate the input
+
+                //Get id from request
+
+                //Find and update entry
+                const result = await Book.findByIdAndUpdate(id, request.body);
+
+                //Validate result
+                if(!result) {
+                    console.log(`Updating book ${id} failed`);
+                    return response.status(404).send({
+                        message: `Book ${id} not found`,
+                    });
+                }
+
+                //Post success on server
+                
+                //Return response
+            }
+            catch(error) {
+                //Post error on server and return error to call function
+            }
+        });
+
+        2.Open new request in Postman, type
+            [
+                method: Put
+                url: http://localhost:5555/books/"book_id"
+                body: {
+                    "title": "New Book Title",
+                    "author": "New Book Author",
+                    "publishYear": XXXX
+                }
+            ]
+
+    e.Delete a Book in Database by ID
+        1.[router.delete('/:id', async (request, response) => {
+            try{
+                //Get id from request
+
+                //Find and delete Book by id
+                const result = await Book.findByIdAndDelete(id);
+
+                //Validate result
+
+                //Post success on server
+                
+                //Return response
+            }
+            catch(error) {
+                //Post error on server and return error to call function
+            }
+        });]
+
+        2.Open new request in Postman, type
+            [
+                method: Delete
+                url: http://localhost:5555/books/"book_id"
+            ]
+
+    f.Important points,
+        1. Working with mongoose is a asynchronous process, hence we use async functions.
+        2. ':' is used to tag specific parameters in routes and can be extracted to be used as parameters
+        3. Route url '/books' is already passed by the call function in index.js hence we only use '/' in routes
+        4. If routes were defined directly in index.js then router.post -> app.post and '/' -> '/books'
+        5. All status codes are predefined, refer to Postman API.
+
+5. Open index.js, then
+    a. Import our bookModel
+        [import {BOOK} from './models/bookModel.js';]
+
+    b. Import routes for bookModel
+        [import bookRoute from './routes/bookRoutes.js']
+
+    c. Add a middleware for parsing request body from Postman, allows express to use Json body
+        [app.use(express.json());]
+
+    d. Define routes and add middleware to use these routes for our model
+        [app.use('/books', bookRoute);]
+
+6. CORS(Cross-Origin Resource Sharing) policy Integration
+    When sending request to server from browser we get CORS policy error, which is a security mechanic of browser that restrict requests to different domains without proper origin,method and header definition.
+    
+    a.Open terminal in backend and install CORS library
+        [npm i cors]
+
+    b. Import CORS as middleware in index.js, we have two options
+        1. Allow all origin with default of cors(*)
+            [app.use(cors());]
+        2. Allow custom origins
+            [app.use(cors({
+                origin: 'Allowed Domain eg. http://localhost:3000',
+                methods: ['GET', 'POST', 'PUT', 'DELETE'],
+                allowedHeaders: ['Content-Type']
+            }));]

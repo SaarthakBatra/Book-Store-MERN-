@@ -1,0 +1,72 @@
+#Server Setup
+    1. Open console in the backend folder.
+    2. Write [npm init -y] to add package.json to the project.
+    3. write [npm i express nodemon] to install express as our framework and uses nodemon for automatic server refreshing.
+    4. Open package.json and add "type": "module", this allows us to use  ECMAScript syntax (Import and Export keywords).
+    5. Add the following script lines to script section,
+        a. ["start": "node index.js",] This starts the project in node.js environment.
+        b. ["dev": "nodemon index.js"] This runs the project on nodemon.
+    6. Create index.js in the Backend folder and add the following,
+        a. [import express from "express";] This imports express framework
+        b. [import {PORT} from "./config.js";] This imports the PORT from config file
+        c. [const app = express();]  Defines variable to access express
+        d. [app.listen(PORT, () => { console.log(`App is listening to port: ${PORT}`); });] A function to listen to the defined port
+    7. Create config.js in Backend folder to store PORT data (Better way is to use a ".n" file), and add port data,
+        a. [export const PORT = 5555;]
+    8. In terminal, write [npm run dev] to run the project.
+    9. If terminal shows "App is listening to port: 5555", the setup is complete and we have a basic server.
+    10. To view yor server on browser open [localhost:5555], go to network section in inspect/DevTools and refresh to see your request. 
+
+#Http Routing
+    1. The default Http route of our new server is "/" i.e "http://localhost:5555/".
+    2. Open index.js to create your Http route.
+    3. Write [app.get('/', (request, response) => {
+                console.log(request);
+                return response.status(234).send('Welcome to MERN stack') 
+             });]
+        a. app.get()   -> Http method used to get resource from server
+        b. '/'         -> Route
+        c. request     ->
+        d. response    ->
+        e. .status(234)-> Returns a Http status of 234
+        f. .send()     -> Returns a Http message
+
+#MongoDB Setup (with free online database)
+    1. Open console in Backend folder.
+    2. Type [npm i mongoose] to install mongoDB.
+    3. Open mongodb.com and sign in.
+    4. Create a new free database with a new name relevant to project.
+    5. Select authentication with username and password.
+    6. Go to your database and click connect, then go to drivers and copy the connection string.
+    7. Open config.js and add,
+        a. [export const mongoDBURl = 'Database connection string with username and password(use ASCII codes for special characters)'].
+    8. Open console in backend and install mongoose library by typing [npm i mangoose]. (Mongoose Library is a object monitoring library for MongoDB, allowing easy interaction with MongoDB using JS commands. [mongoosejs.com])
+    9. Open index.js and add/edit as given,
+        a. import {PORT} from "./config.js"; --> [import {PORT, mongoDBURL} from "./config.js";]
+        b. [import mongoose from 'mongoose';], to import mongoose library to work with MongoDB
+        c. [mongoose.connect(mongoDBURL).then(() => {
+                console.log('App connected to database');
+                app.listen(PORT, () => { console.log(`App is listening to port: ${PORT}`);});
+            }).catch((error) => {
+                console.log(`Database connection failed.\nError: ${error}`);
+            });]
+            
+            c1. mongoose.connect('Database URL')-> Connects the created database to the project.
+            c2. .then(() => {})                 -> Executes certain code if database gets connected.
+            c3. app.listen()                    -> Runs the express server only if connection to database is successful (remove app.listen from anywhere else in index.js)
+            c4. .catch((error) => {})           -> If Connection fails, this catches the error to be used for debugging.
+    10. Run the project using [npm run dev], you should get two success messages.
+    11. If server fails to connect make sure your IP is added to the database.
+
+
+
+
+
+
+Errors
+    1. For error "npm : File C:\Program Files\nodejs\npm.ps1 cannot be loaded because running scripts
+        is disabled on this system. For more information, see about_Execution_Policies at
+        https:/go.microsoft.com/fwlink/?LinkID=135170.", execute the following
+            1> [set-ExecutionPolicy RemoteSigned -Scope CurrentUser]
+            2> [Get-ExecutionPolicy]
+            3> [Get-ExecutionPolicy -list]

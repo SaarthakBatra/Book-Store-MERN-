@@ -1,0 +1,26 @@
+Setup: 
+    1. Open console in the project directory and create a react project using vite as,
+        [create vite@latest], install the latest version is prompted, Project Name - Frontend, React and javascript setup.
+    2. Open console in frontend directory and.
+        a. Install npm package 
+            [npm i]
+        b. Install TailwindCSS
+            [npm i -D tailwindcss postcss autoprefixer]
+            [npx tailwindcss init -p]
+        c. Install SPA(single page application) Library
+            [npm i react-router-dom]
+        d. Install Axios for sending Http requests and React icons for icons
+            [npm i axios react-icons]
+            
+    3. Open tailwind.config.js and edit to add,
+        [content: [
+            "/index.html",
+            "./src/**/*.{js,ts,jsx,tsx}"
+        ],]
+    4. Open ./src
+        a. Open index.css, delete everything and add,
+            [@tailwind base;]
+            [@tailwind components;]
+            [@tailwind utilities;]
+        b. Delete App.css
+    
